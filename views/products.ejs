@@ -1,0 +1,28 @@
+<%- include("partials/head.ejs") %> 
+<%- include("partials/header.ejs") %> 
+<h2>Products List</h2>
+<table id="products-table">
+  <tr id="products-table-header">
+    <th>Name</th>
+    <th>Category</th>
+    <th>Flavor</th>
+    <th colspan="2"></th>
+  </tr>
+  <% if (products && products.length) { %>
+    <% products.forEach((product) => { %>
+      <tr>
+        <td><%= product.name %></td>
+        <td><%= product.category %></td>
+        <td><%= product.flavor %></td>
+        <td><a href="/jobs/edit/id"><button type="button">edit</button></a></td>
+        <td>
+            <form method="POST" action="/jobs/delete/id" style="display: inline">
+            <button>delete</button>
+            <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  <% } %>
+</table>
+<%- include("partials/footer.ejs") %>
