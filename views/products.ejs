@@ -1,6 +1,7 @@
 <%- include("partials/head.ejs") %> 
 <%- include("partials/header.ejs") %> 
 <h2>Products List</h2>
+<input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 <table id="products-table">
   <tr id="products-table-header">
     <th>Name</th>
@@ -14,15 +15,21 @@
         <td><%= product.name %></td>
         <td><%= product.category %></td>
         <td><%= product.flavor %></td>
-        <td><a href="/jobs/edit/id"><button type="button">edit</button></a></td>
+        <td><a href="/products/edit/<%= product.id %>">
+            <button type="button">edit</button>
+          </a></td>
         <td>
-            <form method="POST" action="/jobs/delete/id" style="display: inline">
-            <button>delete</button>
-            <input type="hidden" name="_csrf" value="<%= _csrf %>" />
-          </form>
+          <form method="POST" action="/products/delete/<%= product.id %>" style="display:inline;">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit">delete</button>
+          </form>          
         </td>
       </tr>
     <% }) %>
   <% } %>
 </table>
+<div>
+    <a href="/products/edit"> <button>add</button> </a>
+</div>
+
 <%- include("partials/footer.ejs") %>

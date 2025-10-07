@@ -1,0 +1,36 @@
+<%- include("partials/head.ejs") %> 
+<%- include("partials/header.ejs") %> 
+<form
+  method="POST"
+  action="<%= product ? '/products/update/' + product._id : '/products' %>"
+>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+  <div>
+    <label>Name</label>
+    <input type="text" name="name" value="<%= product ? product.name : '' %>" required />
+  </div>
+  <div>
+    <label>Category</label>
+    <select name="category" value="<%= product ? product.category : '' %>" />
+      <option value="black">black</option>
+      <option value="green">green</option>
+      <option value="herbal">herbal</option>
+    </select>
+    <!-- <input type="text" name="category" value="<%= product ? product.category : '' %>" /> -->
+  </div>
+  <div>
+    <label>Flavor</label>
+    <select name="flavor" value="<%= product ? product.flavor : '' %>" />
+      <option value="jasmine">jasmine</option>
+      <option value="strawberry">strawberry</option>
+      <option value="mixedberries">mixedberries</option>
+      <option value="grape">grape</option>
+      <option value="tropical">tropical</option>
+    </select>
+    <!-- <input type="text" name="flavor" value="<%= product ? product.flavor : '' %>" /> -->
+  </div>
+  <button type="submit"><%= product ? 'Update' : 'Add' %></button>
+  <a href="/products"><button type="button">Cancel</button></a>
+</form>
+
+<%- include("partials/footer.ejs") %>

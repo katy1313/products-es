@@ -1,7 +1,9 @@
 <h1>The Products EJS Application</h1>
+<input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 <% if (user) { %>
    <p>User <%= user.name %> is logged on.</p>
    <form method="POST" action="/sessions/logoff">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
    <button>Logoff</button>
    </form>
 <% } %>

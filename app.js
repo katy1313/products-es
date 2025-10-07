@@ -57,7 +57,7 @@ app.use(cookieParser("use_a_secure_secret"))
 // CSRF middleware with __Host- cookie
 const csrfProtection = csrf({
     cookie: {
-      key: "__Host-csrf",
+      key: "csrftoken",
       httpOnly: true,
       secure: app.get("env") === "production", // require HTTPS in prod
       sameSite: "strict",
