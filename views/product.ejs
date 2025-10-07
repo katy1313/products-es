@@ -1,5 +1,6 @@
 <%- include("partials/head.ejs") %> 
 <%- include("partials/header.ejs") %> 
+<h2><%= product ? "Edit Product" : "Add Product" %></h2>
 <form
   method="POST"
   action="<%= product ? '/products/update/' + product._id : '/products' %>"

@@ -22,14 +22,16 @@
           <form method="POST" action="/products/delete/<%= product.id %>" style="display:inline;">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <button type="submit">delete</button>
-          </form>          
+          </form>
         </td>
       </tr>
     <% }) %>
   <% } %>
 </table>
 <div>
-    <a href="/products/edit"> <button>add</button> </a>
+    <a href="/products/edit"> 
+      <button>add</button> 
+    </a>
 </div>
 
 <%- include("partials/footer.ejs") %>
