@@ -34,6 +34,8 @@ if (app.get("env") === "production") {
 }
 
 app.use(session(sessionParms));
+
+/* ----------------- Passport ----------------- */
 const passport = require("passport");
 const passportInit = require("./passport/passportInit");  //registers our local Passport strategy, and sets up the serializeUser and deserializeUser functions onto the passport object
 
@@ -41,27 +43,72 @@ passportInit();
 app.use(passport.initialize()); //sets up Passport to work with Express and sessions
 app.use(passport.session()); //which sets up an Express middleware that runs on all requests, checks the session cookie for a user id, and if it finds one, deserializes and attaches it to the req.user property
 
+
+/* ----------------- Flash messages ----------------- */
 app.use(require("connect-flash")()); // handles flash messages to inform the user of the results
 app.use(require("./middleware/storeLocals"));
+
+/* ----------------- CSRF Protection ----------------- */
+const cookieParser = require("cookie-parser");
+const csrf = require("csurf");
+app.use(cookieParser("use_a_secure_secret"))
+
+
+// CSRF middleware with __Host- cookie
+const csrfProtection = csrf({
+    cookie: {
+      key: "csrftoken",
+      httpOnly: true,
+      secure: app.get("env") === "production", // require HTTPS in prod
+      sameSite: "strict",
+      path: "/", // required for __Host-
+    },
+  });
+
+  app.use(csrfProtection);
+
+  // Makes token available to all views
+  app.use((req, res, next) => {
+    res.locals.csrfToken = req.csrfToken();
+    next();
+  });
+
+/* ----------------- Routes ----------------- */
 app.get("/", (req, res) => {
   res.render("index");
 });
+
 app.use("/sessions", require("./routes/sessionRoutes"));
+
+
+// error handler
+const notFoundMiddleware = require('./middleware/not-found');
+const errorHandlerMiddleware = require('./middleware/error-handler');
 
 // secret word handling
 const secretWordRouter = require("./routes/secretWord");
 const auth = require("./middleware/auth");
 app.use("/secretWord", auth, secretWordRouter);
+const productsRouter = require('./routes/products')
+app.use("/products", auth, productsRouter);
 
-app.use((req, res) => {
-  res.status(404).send(`That page (${req.url}) was not found.`);
-});
+app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
-app.use((err, req, res, next) => {
-  res.status(500).send(err.message);
-  console.log(err);
-});
 
+/* ----------------- Error Handling ----------------- */
+// app.use((req, res) => {
+//   res.status(404).send(`That page (${req.url}) was not found.`);
+// });
+
+// app.use((err, req, res, next) => {
+//   res.status(500).send(err.message);
+//   console.log(err);
+// });
+
+
+
+/* ----------------- Server Start ----------------- */
 const port = process.env.PORT || 3000;
 
 const start = async () => {
