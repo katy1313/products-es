@@ -21,9 +21,14 @@ const ProductSchema = new mongoose.Schema({
         trim: true,
         maxlength: [100, 'Flavor cannot be more than 100 characters'],
     },
-    image: {
-        type: String,
-        required: false,
+    quantity: {
+        type: Number,
+        required: [false, 'Please provide quantity of the product available'],
+        min: 1,
+    },
+    price: {
+        type: Number,
+        required: [false, 'Please provide price'],
         trim: true,
     },
     createdBy: {
