@@ -1,6 +1,5 @@
 const express = require("express");
 require("express-async-errors");
-
 const app = express();
 
 app.set("view engine", "ejs");
@@ -91,6 +90,8 @@ const auth = require("./middleware/auth");
 app.use("/secretWord", auth, secretWordRouter);
 const productsRouter = require('./routes/products')
 app.use("/products", auth, productsRouter);
+const ordersRouter = require('./routes/orders');
+app.use('/orders', auth, ordersRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
