@@ -2,7 +2,6 @@
 <%- include("partials/header.ejs") %>
 
 <h2>Tea Selection</h2>
-
 <table id="products-table">
   <tr>
     <th>Name</th>
@@ -49,10 +48,25 @@
   <% if (orders && orders.length) { %>
     <% orders.forEach((order) => { %>
       <% order.items.forEach((item) => { %>
-        <tr>
+        <tr data-order-id="<%= order._id %>" data-product-id="<%= item.product_id._id %>">
           <td><%= item.product_id.name %></td>
-          <td><%= item.quantity %></td>
+          <td>
+            <input
+              type="number"
+              value="<%= item.quantity %>"
+              min="1"
+              class="editable-quantity"
+              data-order-id="<%= order._id %>"
+              data-product-id="<%= item.product_id._id %>"
+            />
+          </td>
           <td>$<%= order.price %></td>
+          <td>
+            <form method="POST" action="/orders/update/<%= order._id %>" style="display:inline;">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit">Update</button>
+            </form>
+          </td>
           <td>
             <form method="POST" action="/orders/delete/<%= order._id %>" style="display:inline;">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />

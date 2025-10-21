@@ -1,14 +1,16 @@
 const Order = require('../models/Order')
 const Product = require('../models/Product')
 const { StatusCodes } = require('http-status-codes')
-const { BadRequestError, NotFoundError } = require('../errors')
+const { BadRequestError, NotFoundError } = require('../errors');
+const { logoff } = require('./sessionController');
 
 const getAllOrders = async (req, res) => {
     const orders = await Order.find({ user_id: req.user._id })
         .populate('items.product_id', 'name price')
         .sort("createdAt");
+    const products = await Product.find({}).sort('createdAt');
 
-    res.render('orders', { orders, products: [], csrfToken: req.csrfToken() });
+    res.render('orders', { orders, products, csrfToken: req.csrfToken() });
 };
 
 const getAllProducts = async (req, res) => {
@@ -53,18 +55,28 @@ const createOrder = async (req, res) => {
 };
 
 const updateOrder = async (req, res) => {
-    const { id } = req.params;
-    const { quantity } = req.body;
+    const { id: orderId } = req.params;
+    const { product_id, quantity } = req.body;
 
-    const order = await Order.findOneAndUpdate(
-        { _id: id, user_id: req.user._id },
-        { 'items.0.quantity': quantity },
-        { new: true, runValidators: true }
+    const order = await Order.findById(orderId);
+    if (!order) throw new NotFoundError("Order not found");
+
+    const item = order.items.find(
+      (i) => i.product_id.toString() === product_id || i.product_id._id?.toString() === product_id
     );
 
-    if (!order) throw new NotFoundError('No order has been found');
-    res.redirect('/orders');
-};
+    if (!item) {
+      throw new NotFoundError("Product not found in order");
+    }
+    item.quantity = quantity;
+
+    const product = await Product.findById(product_id);
+    order.price = product.price * quantity;
+
+    await order.save();
+    res.status(200).json({ msg: "Order updated successfully" });
+  };
+
 
 const deleteOrder = async (req, res) => {
     const { id } = req.params;

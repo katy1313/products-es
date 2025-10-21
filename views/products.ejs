@@ -15,13 +15,14 @@
         <td><%= product.name %></td>
         <td><%= product.category %></td>
         <td><%= product.flavor %></td>
+        <td><%= product.price %></td>
         <td><a href="/products/edit/<%= product.id %>">
-            <button type="button">edit</button>
+            <button type="button">Edit</button>
           </a></td>
         <td>
           <form method="POST" action="/products/delete/<%= product.id %>" style="display:inline;">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-            <button type="submit">delete</button>
+            <button type="submit">Delete</button>
           </form>
         </td>
       </tr>
@@ -30,7 +31,7 @@
 </table>
 <div>
     <a href="/products/edit"> 
-      <button>add</button> 
+      <button>Add</button> 
     </a>
 </div>
 

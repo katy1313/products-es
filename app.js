@@ -72,13 +72,17 @@ const csrfProtection = csrf({
     next();
   });
 
+  app.use((req, res, next) => {
+    console.log(req.url);
+    next()
+  })
+
 /* ----------------- Routes ----------------- */
+app.use("/sessions", require("./routes/sessionRoutes"));
+
 app.get("/", (req, res) => {
   res.render("index");
 });
-
-app.use("/sessions", require("./routes/sessionRoutes"));
-
 
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
