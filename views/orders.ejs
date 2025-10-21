@@ -1,0 +1,84 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<h2>Tea Selection</h2>
+<table id="products-table">
+  <tr>
+    <th>Name</th>
+    <th>Category</th>
+    <th>Flavor</th>
+    <th>Price</th>
+    <th>Quantity</th>
+    <th>Order</th>
+  </tr>
+
+  <% if (products && products.length) { %>
+    <% products.forEach((product) => { %>
+      <tr>
+        <td><%= product.name %></td>
+        <td><%= product.category %></td>
+        <td><%= product.flavor %></td>
+        <td>$<%= product.price %></td>
+        <td>
+          <form method="POST" action="/orders">
+            <input type="hidden" name="product_id" value="<%= product._id %>" />
+            <input type="number" name="quantity" value="1" min="1" required />
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit">Order</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  <% } else { %>
+    <tr><td colspan="6">No products found.</td></tr>
+  <% } %>
+</table>
+
+<hr>
+
+<h2>Your Orders</h2>
+<table id="orders-table">
+  <tr>
+    <th>Product</th>
+    <th>Quantity</th>
+    <th>Total Price</th>
+    <th>Action</th>
+  </tr>
+
+  <% if (orders && orders.length) { %>
+    <% orders.forEach((order) => { %>
+      <% order.items.forEach((item) => { %>
+        <tr data-order-id="<%= order._id %>" data-product-id="<%= item.product_id._id %>">
+          <td><%= item.product_id.name %></td>
+          <td>
+            <input
+              type="number"
+              value="<%= item.quantity %>"
+              min="1"
+              class="editable-quantity"
+              data-order-id="<%= order._id %>"
+              data-product-id="<%= item.product_id._id %>"
+            />
+          </td>
+          <td>$<%= order.price %></td>
+          <td>
+            <form method="POST" action="/orders/update/<%= order._id %>" style="display:inline;">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit">Update</button>
+            </form>
+          </td>
+          <td>
+            <form method="POST" action="/orders/delete/<%= order._id %>" style="display:inline;">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    <% }) %>
+  <% } else { %>
+    <tr><td colspan="4">No orders yet.</td></tr>
+  <% } %>
+</table>
+
+<%- include("partials/footer.ejs") %>

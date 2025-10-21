@@ -30,6 +30,10 @@
     </select>
     <!-- <input type="text" name="flavor" value="<%= product ? product.flavor : '' %>" /> -->
   </div>
+  <div>
+    <label>Price</label>
+    <input type="text" name="price" value="<%= product ? product.price : '' %>" required />
+  </div>
   <button type="submit"><%= product ? 'Update' : 'Add' %></button>
   <a href="/products"><button type="button">Cancel</button></a>
 </form>

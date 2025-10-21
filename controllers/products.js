@@ -8,7 +8,7 @@ const getAllProducts = async (req, res) => {
 
     res.render("products", { products });
   };
-  
+
 const getProduct = async(req, res) => {
     const {
         user:{userId},
@@ -46,7 +46,7 @@ const updateProduct = async(req, res) => {
     const product = await Product.findByIdAndUpdate({
         _id: productId,
         createdBy: req.user._id,
-    }, req.body, 
+    }, req.body,
     {new:true, runValidators:true})
 
     if(!product) {

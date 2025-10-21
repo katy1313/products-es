@@ -1,7 +1,12 @@
 const express = require("express");
 require("express-async-errors");
-
 const app = express();
+
+//extra security packages
+const helmet = require('helmet')
+const cors = require('cors')
+const xss = require('xss-clean')
+const rateLimiter = require('express-rate-limit')
 
 app.set("view engine", "ejs");
 app.use(require("body-parser").urlencoded({ extended: true }));
@@ -56,30 +61,39 @@ app.use(cookieParser("use_a_secure_secret"))
 
 // CSRF middleware with __Host- cookie
 const csrfProtection = csrf({
-    cookie: {
-      key: "csrftoken",
-      httpOnly: true,
-      secure: app.get("env") === "production", // require HTTPS in prod
-      sameSite: "strict",
-      path: "/", // required for __Host-
-    },
-  });
+  cookie: {
+    key: "csrftoken",
+    httpOnly: true,
+    secure: app.get("env") === "production", // require HTTPS in prod
+    sameSite: "strict",
+    path: "/", // required for __Host-
+  },
+});
 
-  app.use(csrfProtection);
+app.use(csrfProtection);
 
-  // Makes token available to all views
-  app.use((req, res, next) => {
-    res.locals.csrfToken = req.csrfToken();
-    next();
-  });
+// Makes token available to all views
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
+// extra packages
+app.use(rateLimiter({
+  windowMs: 15 * 60 * 1000, //15 minutes
+  max: 100, //limit each IP to 100 request per window
+}))
+app.use(helmet())
+app.use(cors())
+app.use(xss())
+
 
 /* ----------------- Routes ----------------- */
+app.use("/sessions", require("./routes/sessionRoutes"));
+
 app.get("/", (req, res) => {
   res.render("index");
 });
-
-app.use("/sessions", require("./routes/sessionRoutes"));
-
 
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
@@ -91,6 +105,8 @@ const auth = require("./middleware/auth");
 app.use("/secretWord", auth, secretWordRouter);
 const productsRouter = require('./routes/products')
 app.use("/products", auth, productsRouter);
+const ordersRouter = require('./routes/orders');
+app.use('/orders', auth, ordersRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

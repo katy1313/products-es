@@ -1,7 +1,11 @@
-<h1>The Products EJS Application</h1>
+<h1>Sip 'N Style</h1>
 <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 <% if (user) { %>
    <p>User <%= user.name %> is logged on.</p>
+      <a href="/orders">
+    <button type="button">Shop</button>
+    </a>
+<td>
    <form method="POST" action="/sessions/logoff">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
    <button>Logoff</button>
