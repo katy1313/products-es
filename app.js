@@ -8,17 +8,25 @@ const cors = require('cors')
 const xss = require('xss-clean')
 const rateLimiter = require('express-rate-limit')
 
+//tests
+const chai = require('chai')
+const chaiHttp = require('chai-http').default
+chai.use(chaiHttp)
+
 app.set("view engine", "ejs");
 app.use(require("body-parser").urlencoded({ extended: true }));
 
 require("dotenv").config(); // to load the .env file into the process.env object
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
-const url = process.env.MONGO_URI;
+let mongoURL = process.env.MONGO_URI;
+if (process.env.NODE_ENV == "test") {
+  mongoURL = process.env.MONGO_URI_TEST;
+}
 
 const store = new MongoDBStore({
   // may throw an error, which won't be caught
-  uri: url,
+  uri: mongoURL,
   collection: "mySessions",
 });
 store.on("error", function (error) {
@@ -87,12 +95,34 @@ app.use(helmet())
 app.use(cors())
 app.use(xss())
 
+//testing middlewear
+app.use((req, res, next) => {
+  if (req.path == "/multiply") {
+    res.set("Content-Type", "application/json");
+  } else {
+    res.set("Content-Type", "text/html");
+  }
+  next();
+});
+
 
 /* ----------------- Routes ----------------- */
 app.use("/sessions", require("./routes/sessionRoutes"));
 
 app.get("/", (req, res) => {
   res.render("index");
+});
+
+// Chai
+
+app.get("/multiply", (req, res) => {
+  const result = req.query.first * req.query.second;
+  if (result.isNaN) {
+    result = "NaN";
+  } else if (result == null) {
+    result = "null";
+  }
+  res.json({ result: result });
 });
 
 // error handler
@@ -126,12 +156,11 @@ app.use(errorHandlerMiddleware);
 
 /* ----------------- Server Start ----------------- */
 const port = process.env.PORT || 3000;
-
-const start = async () => {
+const start = () => {
   try {
-    await require("./db/connect")(process.env.MONGO_URI);
-    app.listen(port, () =>
-      console.log(`Server is listening on port ${port}...`)
+    require("./db/connect")(mongoURL);
+    return app.listen(port, () =>
+      console.log(`Server is listening on port ${port}...`),
     );
   } catch (error) {
     console.log(error);
@@ -139,3 +168,5 @@ const start = async () => {
 };
 
 start();
+
+module.exports = { app };

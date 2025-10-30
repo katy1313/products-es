@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "../../node-express-jobs-api"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
