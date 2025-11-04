@@ -1,9 +1,13 @@
+console.log("line1")
 const { app } = require("../app");
+console.log("line2")
 const { factory, seed_db } = require("../util/seed_db");
+console.log("line4");
 const faker = require("@faker-js/faker").fakerEN_US;
 const get_chai = require("../util/get_chai");
 
 const User = require("../models/User");
+console.log("line9");
 
 describe("tests for registration and logon", function () {
   // after(() => {
@@ -11,8 +15,11 @@ describe("tests for registration and logon", function () {
   // });
   it("should get the registration page", async () => {
     const { expect, request } = await get_chai();
+    console.log("line14", expect)
+    console.log("line14", request)
     const req = request.execute(app).get("/session/register").send();
     const res = await req;
+    console.log("line17")
     expect(res).to.have.status(200);
     expect(res).to.have.property("text");
     expect(res.text).to.include("Enter your name");

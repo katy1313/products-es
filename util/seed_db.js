@@ -1,24 +1,31 @@
+console.log("line1 seed");
+
 const Product = require("../models/Product");
 const User = require("../models/User");
+console.log('seed file 3 line')
 const faker = require("@faker-js/faker").fakerEN_US;
+console.log('seed file 4 line')
 const FactoryBot = require("factory-bot");
+console.log('seed file 45 line')
 require("dotenv").config();
-
+console.log('seed file 5 line')
 const testUserPassword = faker.internet.password();
 const factory = FactoryBot.factory;
 const factoryAdapter = new FactoryBot.MongooseAdapter();
+console.log('seed file 9 line')
 factory.setAdapter(factoryAdapter);
 factory.define("product", Product, {
-  name: () => faker.product.name(),
-  category: () => faker.product.category(),
-  flavor: () => faker.product.flavor()
+  name: () => faker.commerce.product(),
+  category: () => faker.commerce.productAdjective(),
+  flavor: () => faker.commerce.productMaterial()
 });
+
 factory.define("user", User, {
   name: () => faker.person.fullName(),
   email: () => faker.internet.email(),
   password: () => faker.internet.password(),
 });
-
+console.log('seed file')
 const seed_db = async () => {
   let testUser = null;
   try {
@@ -26,7 +33,7 @@ const seed_db = async () => {
     await Product.deleteMany({}); // deletes all job records
     await User.deleteMany({}); // and all the users
     testUser = await factory.create("user", { password: testUserPassword });
-    await factory.createMany("product", 20, { createdBy: testUser._id }); // put 30 job entries in the database.
+   await factory.createMany("product", 20, { createdBy: testUser._id }); // put 30 job entries in the database.
   } catch (e) {
     console.log("database error");
     console.log(e.message);

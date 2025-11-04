@@ -35,7 +35,7 @@ before(async () => {
   });
 
   const pageParts = res.text.split("<tr>")
-  expect(pageParts).to.equal(21)
+expect(pageParts).to.equal(21)
 
 describe("crud", function() {
     it("should create a product", async () => {
