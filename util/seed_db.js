@@ -1,23 +1,18 @@
-console.log("line1 seed");
-
 const Product = require("../models/Product");
 const User = require("../models/User");
-console.log('seed file 3 line')
 const faker = require("@faker-js/faker").fakerEN_US;
-console.log('seed file 4 line')
 const FactoryBot = require("factory-bot");
-console.log('seed file 45 line')
 require("dotenv").config();
-console.log('seed file 5 line')
 const testUserPassword = faker.internet.password();
 const factory = FactoryBot.factory;
 const factoryAdapter = new FactoryBot.MongooseAdapter();
-console.log('seed file 9 line')
 factory.setAdapter(factoryAdapter);
 factory.define("product", Product, {
   name: () => faker.commerce.product(),
-  category: () => faker.commerce.productAdjective(),
-  flavor: () => faker.commerce.productMaterial()
+  category: () =>
+    ['black', 'green', 'herbal'][Math.floor(3 * Math.random())],
+  flavor: () =>
+    ['jasmine', 'strawberry', 'mixedberries', 'grape', 'tropical'][Math.floor(3 * Math.random())],
 });
 
 factory.define("user", User, {
@@ -25,7 +20,7 @@ factory.define("user", User, {
   email: () => faker.internet.email(),
   password: () => faker.internet.password(),
 });
-console.log('seed file')
+
 const seed_db = async () => {
   let testUser = null;
   try {

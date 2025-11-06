@@ -1,5 +1,6 @@
 const Product = require("../models/Product")
 const { seed_db, testUserPassword } = require("../util/seed_db");
+const get_chai = require("../util/get_chai");
 
 before(async () => {
     const { expect, request } = await get_chai();
@@ -32,10 +33,11 @@ before(async () => {
     expect(this.csrfToken).to.not.be.undefined;
     expect(this.sessionCookie).to.not.be.undefined;
     expect(this.csrfCookie).to.not.be.undefined;
+
+    const pageParts = res.text.split("<tr>")
+    expect(pageParts).to.equal(21)
   });
 
-  const pageParts = res.text.split("<tr>")
-expect(pageParts).to.equal(21)
 
 describe("crud", function() {
     it("should create a product", async () => {
