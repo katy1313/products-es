@@ -1,3 +1,5 @@
+const get_chai = require("../util/get_chai");
+
 it("should log the user on", async () => {
     const dataToPost = {
       _csrf: this.csrfToken,

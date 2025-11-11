@@ -9,7 +9,7 @@ describe("tests for registration and logon", function () {
   // after(() => {
   //   server.close();
   // });
-  it("should get the registration page", async () => {
+  it("should get the registration page", async function() {
     const { expect, request } = await get_chai();
     console.log("line14", expect)
     console.log("line14", request)
@@ -80,7 +80,7 @@ describe("tests for registration and logon", function () {
     expect(this.sessionCookie).to.not.be.undefined;
   });
 
-  it("should get the index page", async () => {
+  it("should get the index page", async function() {
     const { expect, request } = await get_chai();
     const req = request
       .execute(app)
